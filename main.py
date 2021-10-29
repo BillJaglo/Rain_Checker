@@ -47,7 +47,7 @@ if will_rain:
     )
     print(message.status)
 
-print("testing commit2")
+
 
 
 
