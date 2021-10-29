@@ -3,8 +3,9 @@ from twilio.rest import Client
 import os
 
 
-MY_LAT = 41.8781
-MY_LONG = -87.6298
+MY_LAT = os.environ.get("MY_LAT")
+MY_LONG = os.environ.get("MY_LONG")
+
 
 API_KEY = os.environ.get("API_KEY")
 OWM_ENDPOINT = os.environ.get("OWM_ENDPOINT")
@@ -12,20 +13,14 @@ ACCOUNT_SID = os.environ.get("ACCOUNT_SID")
 AUTH_TOKEN = os.environ.get("AUTH_TOKEN")
 PHONE_NUMBER_TO = os.environ.get("PHONE_NUMBER_TO")
 
-api_key = API_KEY
-owm_endpoint = OWM_ENDPOINT
-account_sid = ACCOUNT_SID
-auth_token = AUTH_TOKEN
-phone_number_to = PHONE_NUMBER_TO
-
 weather_params = {
     "lat": MY_LAT,
     "lon": MY_LONG,
-    "appid": api_key,
+    "appid": API_KEY,
     "exclude": "current,minutely,daily",
 }
 
-response = requests.get(url=owm_endpoint, params=weather_params)
+response = requests.get(url=OWM_ENDPOINT, params=weather_params)
 response.raise_for_status()
 weather_data = response.json()
 weather_slice = weather_data["hourly"][:12]
@@ -38,12 +33,12 @@ for hour_data in weather_slice:
         will_rain = True
 
 if will_rain:
-    client = Client(account_sid, auth_token)
+    client = Client(ACCOUNT_SID, AUTH_TOKEN)
     message = client.messages \
         .create(
-        body="It's going to rain today. Remember to bring an umbrella.",
-        from_='+18383843814',
-        to=phone_number_to
+            body="It's going to rain today. Remember to bring an umbrella.",
+            from_='+18383843814',
+            to=PHONE_NUMBER_TO
     )
     print(message.status)
 
